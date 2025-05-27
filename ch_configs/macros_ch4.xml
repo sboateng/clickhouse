@@ -1,6 +1,6 @@
-<yandex>
+<clickhouse>
     <macros replace="true">
         <shard>2</shard>
         <replica>ch4</replica>
     </macros>
-</yandex>
+</clickhouse>

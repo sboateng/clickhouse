@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   zookeeper:
@@ -9,15 +7,14 @@ services:
       - './data/zoo/datalog:/datalog'
 
   ch1:
-    image: yandex/clickhouse-server:18.16.1
+    image: clickhouse/clickhouse-server:25.4.5
     restart: on-failure
     depends_on:
       - zookeeper
     volumes:
-      - './data/ch1/ch:/var/lib/clickhouse/'
-      - './ch_configs:/etc/clickhouse-server/'
       - './dictionaries:/opt/dictionaries/'
       - './ch_configs/macros_ch1.xml:/etc/clickhouse-server/config.d/macros.xml'
+      - './ch_configs:/etc/clickhouse-server/'
     ports:
       - 9000:9000
       - 8123:8123
@@ -25,47 +22,63 @@ services:
       - 8443:8443
     ulimits:
       nofile: 262144
+    networks:
+      - clicknet
+    environment:
+      CLICKHOUSE_DB: my_database
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin123
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
 
   ch2:
-    image: yandex/clickhouse-server:18.16.1
+    image: clickhouse/clickhouse-server:25.4.5
     restart: on-failure
     depends_on:
       - zookeeper
     volumes:
-      - './data/ch2/ch:/var/lib/clickhouse/'
-      - './ch_configs:/etc/clickhouse-server/'
       - './dictionaries:/opt/dictionaries/'
       - './ch_configs/macros_ch2.xml:/etc/clickhouse-server/config.d/macros.xml'
+      - './ch_configs:/etc/clickhouse-server/'
     ulimits:
       nofile: 262144
+    networks:
+      - clicknet
 
   ch3:
-    image: yandex/clickhouse-server:18.16.1
+    image: clickhouse/clickhouse-server:25.4.5
     restart: on-failure
     depends_on:
       - zookeeper
     volumes:
-      - './data/ch3/ch:/var/lib/clickhouse/'
-      - './ch_configs:/etc/clickhouse-server/'
       - './dictionaries:/opt/dictionaries/'
       - './ch_configs/macros_ch3.xml:/etc/clickhouse-server/config.d/macros.xml'
+      - './ch_configs:/etc/clickhouse-server/'
     ulimits:
       nofile: 262144
+    networks:
+      - clicknet
 
   ch4:
-    image: yandex/clickhouse-server:18.16.1
+    image: clickhouse/clickhouse-server:25.4.5
     restart: on-failure
     depends_on:
       - zookeeper
     volumes:
-      - './data/ch4/ch:/var/lib/clickhouse/'
-      - './ch_configs:/etc/clickhouse-server/'
-      - './dictionaries:/opt/dictionaries/'
       - './ch_configs/macros_ch4.xml:/etc/clickhouse-server/config.d/macros.xml'
+      - './dictionaries:/opt/dictionaries/'
+      - './ch_configs:/etc/clickhouse-server/'
     ulimits:
       nofile: 262144
+    networks:
+      - clicknet
 
   client:
-    image: yandex/clickhouse-client:18.16.1
+    image: clickhouse/clickhouse-client:21.3.20
     volumes:
       - './client-config.xml:/etc/clickhouse-client/config.xml'
+    networks:
+      - clicknet
+
+networks:
+  clicknet:
+    driver: bridge

@@ -1,4 +1,4 @@
-<yandex>
+<clickhouse>
     <remote_servers replace="true">
         <pokemon>
             <!-- shard 01 -->
@@ -26,4 +26,4 @@
             </shard>
         </pokemon>
     </remote_servers>
-</yandex>
+</clickhouse>
